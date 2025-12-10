@@ -1,0 +1,33 @@
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+#Load variables
+load_dotenv(override=True)
+
+#Setup client
+client=OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY")
+)
+
+print("Sending request to AI...")
+
+try:
+    response = client.chat.completions.create(
+        model="mistralai/devstral-2512:free",
+        messages=[{"role":"user",
+        "content":"What is 2+2?"}]
+    )
+
+#check result
+content = response.choices[0].message.content
+finish_reason = response.choices[0].finish_reason
+
+if not content:
+    print(f"AI returned empty text, reason: {finish_reason}")
+else:
+    print(f"AI answer: {content}")
+
+except Exception as e:
+    print(f"Connection Error: {e}")
